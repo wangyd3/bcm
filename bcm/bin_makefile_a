@@ -1,0 +1,137 @@
+#created by gcc template
+path=F:\PAXPAY~2\build\gcc410\bin
+
+NAME      = bcm
+VERSION   = "v_MATCH_V3.13"
+GCCDIR    = F:\PAXPAY~2\build\gcc410
+GCCBIN    = $(GCCDIR)\bin
+GCCLIB    = -L. -L$(GCCDIR)\lib
+LOCSRC    = 
+LOCOBJ    = F:\MONTOR~1\bcm\bcm\obj_Sxx
+LOCINC    = -I. -IF:\PAXPAY~2\include
+POSLIBDIR = F:\PAXPAY~2\postype\Sxx
+POSLIB    = s80api
+
+ASM       = $(GCCBIN)\arm-elf-gcc -Os -msoft-float -mlittle-endian -ffunction-sections -D_S80_POS $(LOCINC) -c 
+GCC       = $(GCCBIN)\arm-elf-gcc -Os -msoft-float -mlittle-endian -ffunction-sections -D_S80_POS $(LOCINC) -c
+LINK      = $(GCCBIN)\arm-elf-ld -T$(POSLIBDIR)\mldscript_s80 -Map $(LOCOBJ)\$(NAME).map --gc-sections --cref -nostartfiles $(GCCLIB) -L$(POSLIBDIR)
+OBJ       = $(LOCOBJ)\init.o \
+			$(LOCOBJ)\CppInit.o \
+            $(LOCOBJ)\AutoTestDeal.o \
+            $(LOCOBJ)\BT.o \
+            $(LOCOBJ)\buzzer.o \
+            $(LOCOBJ)\clock.o \
+            $(LOCOBJ)\com.o \
+            $(LOCOBJ)\config.o \
+            $(LOCOBJ)\GetTermInfo.o \
+            $(LOCOBJ)\gSensor.o \
+            $(LOCOBJ)\iccard.o \
+            $(LOCOBJ)\keyboard.o \
+            $(LOCOBJ)\lan.o \
+            $(LOCOBJ)\lcd.o \
+            $(LOCOBJ)\loop.o \
+            $(LOCOBJ)\magcard.o \
+            $(LOCOBJ)\main.o \
+            $(LOCOBJ)\memory.o \
+            $(LOCOBJ)\MKey.o \
+            $(LOCOBJ)\modem.o \
+            $(LOCOBJ)\other.o \
+            $(LOCOBJ)\porttest.o \
+            $(LOCOBJ)\printer.o \
+            $(LOCOBJ)\public.o \
+            $(LOCOBJ)\rfid.o \
+            $(LOCOBJ)\Scan.o \
+            $(LOCOBJ)\speech.o \
+            $(LOCOBJ)\Tel.o \
+            $(LOCOBJ)\Ts.o \
+            $(LOCOBJ)\uploadfile.o \
+            $(LOCOBJ)\usb.o \
+            $(LOCOBJ)\wifi.o \
+            $(LOCOBJ)\wnet.o
+
+#  ADS-ROM version
+$(NAME).elf: $(OBJ) F:\MONTOR~1\bcm\bcm\BIN_MA~2
+    $(LINK) -o $(LOCOBJ)\$(NAME).elf $(OBJ) --start-group  -l$(POSLIB) -lc -lgcc --end-group
+	arm-elf-readelf -a $(LOCOBJ)\$(NAME).elf > $(LOCOBJ)\$(NAME).sys
+	arm-elf-objdump -D -S $(LOCOBJ)\$(NAME).elf > $(LOCOBJ)\$(NAME).dasm
+    elftobin $(LOCOBJ)\$(NAME).elf $(LOCOBJ)\$(NAME)($(VERSION)).bin PAX-S80-MAPP
+	
+# ASM file
+$(LOCOBJ)\init.o: "$(POSLIBDIR)\init_s80.s"
+        $(ASM) "$(POSLIBDIR)\init_s80.s" -o "$(LOCOBJ)\init.o"
+
+# init file
+$(LOCOBJ)\CppInit.o: "$(GCCDIR)\lib\CppInit.c"
+        $(GCC) "$(GCCDIR)\lib\CppInit.c" -o "$(LOCOBJ)\CppInit.o"
+		
+#  C files
+$(LOCOBJ)\AutoTestDeal.o: "F:\MONTOR~1\bcm\bcm\..\bcm_src\AutoTestDeal.c"
+        $(GCC) "F:\MONTOR~1\bcm\bcm\..\bcm_src\AutoTestDeal.c" -o "$(LOCOBJ)\AutoTestDeal.o"
+$(LOCOBJ)\BT.o: "F:\MONTOR~1\bcm\bcm\..\bcm_src\BT.c"
+        $(GCC) "F:\MONTOR~1\bcm\bcm\..\bcm_src\BT.c" -o "$(LOCOBJ)\BT.o"
+$(LOCOBJ)\buzzer.o: "F:\MONTOR~1\bcm\bcm\..\bcm_src\buzzer.c"
+        $(GCC) "F:\MONTOR~1\bcm\bcm\..\bcm_src\buzzer.c" -o "$(LOCOBJ)\buzzer.o"
+$(LOCOBJ)\clock.o: "F:\MONTOR~1\bcm\bcm\..\bcm_src\clock.c"
+        $(GCC) "F:\MONTOR~1\bcm\bcm\..\bcm_src\clock.c" -o "$(LOCOBJ)\clock.o"
+$(LOCOBJ)\com.o: "F:\MONTOR~1\bcm\bcm\..\bcm_src\com.c"
+        $(GCC) "F:\MONTOR~1\bcm\bcm\..\bcm_src\com.c" -o "$(LOCOBJ)\com.o"
+$(LOCOBJ)\config.o: "F:\MONTOR~1\bcm\bcm\..\bcm_src\config.c"
+        $(GCC) "F:\MONTOR~1\bcm\bcm\..\bcm_src\config.c" -o "$(LOCOBJ)\config.o"
+$(LOCOBJ)\GetTermInfo.o: "F:\MONTOR~1\bcm\bcm\..\bcm_src\GetTermInfo.c"
+        $(GCC) "F:\MONTOR~1\bcm\bcm\..\bcm_src\GetTermInfo.c" -o "$(LOCOBJ)\GetTermInfo.o"
+$(LOCOBJ)\gSensor.o: "F:\MONTOR~1\bcm\bcm\..\bcm_src\gSensor.c"
+        $(GCC) "F:\MONTOR~1\bcm\bcm\..\bcm_src\gSensor.c" -o "$(LOCOBJ)\gSensor.o"
+$(LOCOBJ)\iccard.o: "F:\MONTOR~1\bcm\bcm\..\bcm_src\iccard.c"
+        $(GCC) "F:\MONTOR~1\bcm\bcm\..\bcm_src\iccard.c" -o "$(LOCOBJ)\iccard.o"
+$(LOCOBJ)\keyboard.o: "F:\MONTOR~1\bcm\bcm\..\bcm_src\keyboard.c"
+        $(GCC) "F:\MONTOR~1\bcm\bcm\..\bcm_src\keyboard.c" -o "$(LOCOBJ)\keyboard.o"
+$(LOCOBJ)\lan.o: "F:\MONTOR~1\bcm\bcm\..\bcm_src\lan.c"
+        $(GCC) "F:\MONTOR~1\bcm\bcm\..\bcm_src\lan.c" -o "$(LOCOBJ)\lan.o"
+$(LOCOBJ)\lcd.o: "F:\MONTOR~1\bcm\bcm\..\bcm_src\lcd.c"
+        $(GCC) "F:\MONTOR~1\bcm\bcm\..\bcm_src\lcd.c" -o "$(LOCOBJ)\lcd.o"
+$(LOCOBJ)\loop.o: "F:\MONTOR~1\bcm\bcm\..\bcm_src\loop.c"
+        $(GCC) "F:\MONTOR~1\bcm\bcm\..\bcm_src\loop.c" -o "$(LOCOBJ)\loop.o"
+$(LOCOBJ)\magcard.o: "F:\MONTOR~1\bcm\bcm\..\bcm_src\magcard.c"
+        $(GCC) "F:\MONTOR~1\bcm\bcm\..\bcm_src\magcard.c" -o "$(LOCOBJ)\magcard.o"
+$(LOCOBJ)\main.o: "F:\MONTOR~1\bcm\bcm\..\bcm_src\main.c"
+        $(GCC) "F:\MONTOR~1\bcm\bcm\..\bcm_src\main.c" -o "$(LOCOBJ)\main.o"
+$(LOCOBJ)\memory.o: "F:\MONTOR~1\bcm\bcm\..\bcm_src\memory.c"
+        $(GCC) "F:\MONTOR~1\bcm\bcm\..\bcm_src\memory.c" -o "$(LOCOBJ)\memory.o"
+$(LOCOBJ)\MKey.o: "F:\MONTOR~1\bcm\bcm\..\bcm_src\MKey.c"
+        $(GCC) "F:\MONTOR~1\bcm\bcm\..\bcm_src\MKey.c" -o "$(LOCOBJ)\MKey.o"
+$(LOCOBJ)\modem.o: "F:\MONTOR~1\bcm\bcm\..\bcm_src\modem.c"
+        $(GCC) "F:\MONTOR~1\bcm\bcm\..\bcm_src\modem.c" -o "$(LOCOBJ)\modem.o"
+$(LOCOBJ)\other.o: "F:\MONTOR~1\bcm\bcm\..\bcm_src\other.c"
+        $(GCC) "F:\MONTOR~1\bcm\bcm\..\bcm_src\other.c" -o "$(LOCOBJ)\other.o"
+$(LOCOBJ)\porttest.o: "F:\MONTOR~1\bcm\bcm\..\bcm_src\porttest.c"
+        $(GCC) "F:\MONTOR~1\bcm\bcm\..\bcm_src\porttest.c" -o "$(LOCOBJ)\porttest.o"
+$(LOCOBJ)\printer.o: "F:\MONTOR~1\bcm\bcm\..\bcm_src\printer.c"
+        $(GCC) "F:\MONTOR~1\bcm\bcm\..\bcm_src\printer.c" -o "$(LOCOBJ)\printer.o"
+$(LOCOBJ)\public.o: "F:\MONTOR~1\bcm\bcm\..\bcm_src\public.c"
+        $(GCC) "F:\MONTOR~1\bcm\bcm\..\bcm_src\public.c" -o "$(LOCOBJ)\public.o"
+$(LOCOBJ)\rfid.o: "F:\MONTOR~1\bcm\bcm\..\bcm_src\rfid.c"
+        $(GCC) "F:\MONTOR~1\bcm\bcm\..\bcm_src\rfid.c" -o "$(LOCOBJ)\rfid.o"
+$(LOCOBJ)\Scan.o: "F:\MONTOR~1\bcm\bcm\..\bcm_src\Scan.c"
+        $(GCC) "F:\MONTOR~1\bcm\bcm\..\bcm_src\Scan.c" -o "$(LOCOBJ)\Scan.o"
+$(LOCOBJ)\speech.o: "F:\MONTOR~1\bcm\bcm\..\bcm_src\speech.c"
+        $(GCC) "F:\MONTOR~1\bcm\bcm\..\bcm_src\speech.c" -o "$(LOCOBJ)\speech.o"
+$(LOCOBJ)\Tel.o: "F:\MONTOR~1\bcm\bcm\..\bcm_src\Tel.c"
+        $(GCC) "F:\MONTOR~1\bcm\bcm\..\bcm_src\Tel.c" -o "$(LOCOBJ)\Tel.o"
+$(LOCOBJ)\Ts.o: "F:\MONTOR~1\bcm\bcm\..\bcm_src\Ts.c"
+        $(GCC) "F:\MONTOR~1\bcm\bcm\..\bcm_src\Ts.c" -o "$(LOCOBJ)\Ts.o"
+$(LOCOBJ)\uploadfile.o: "F:\MONTOR~1\bcm\bcm\..\bcm_src\uploadfile.c"
+        $(GCC) "F:\MONTOR~1\bcm\bcm\..\bcm_src\uploadfile.c" -o "$(LOCOBJ)\uploadfile.o"
+$(LOCOBJ)\usb.o: "F:\MONTOR~1\bcm\bcm\..\bcm_src\usb.c"
+        $(GCC) "F:\MONTOR~1\bcm\bcm\..\bcm_src\usb.c" -o "$(LOCOBJ)\usb.o"
+$(LOCOBJ)\wifi.o: "F:\MONTOR~1\bcm\bcm\..\bcm_src\wifi.c"
+        $(GCC) "F:\MONTOR~1\bcm\bcm\..\bcm_src\wifi.c" -o "$(LOCOBJ)\wifi.o"
+$(LOCOBJ)\wnet.o: "F:\MONTOR~1\bcm\bcm\..\bcm_src\wnet.c"
+        $(GCC) "F:\MONTOR~1\bcm\bcm\..\bcm_src\wnet.c" -o "$(LOCOBJ)\wnet.o"
+
+		
+clean:
+	del /q $(LOCOBJ)\*.o
+	del /q $(LOCOBJ)\$(NAME).elf
+	del /q $(LOCOBJ)\$(NAME).dasm
+	del /q $(LOCOBJ)\$(NAME).map
+	del /q $(LOCOBJ)\$(NAME)($(VERSION)).bin
