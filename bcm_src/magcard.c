@@ -205,134 +205,6 @@ void MagCommonTest(void)
 	}// 1
 }
 
-
-void MagCommonTestCyc(void)
-{
-	int FailNum,TotalNum;
-	char Track1[256],Track2[256],Track3[256];
-	char TempTrack1[256],TempTrack2[256],TempTrack3[256];
-	uchar ErrorFlag,ucRet,ExitFlag;
-	uchar Str[2][10]={
-		"OK",
-		"Fail"
-	};
-	memset(Track1, 0x00, sizeof(Track1));
-    memset(Track2, 0x00, sizeof(Track2));
-	memset(Track3, 0x00, sizeof(Track3));
-	memset(TempTrack1, 0x00, sizeof(TempTrack1));
-    memset(TempTrack2, 0x00, sizeof(TempTrack2));
-	memset(TempTrack3, 0x00, sizeof(TempTrack3));
-
-
-	TotalNum=0; FailNum=0;
-	MagOpen();
-	while(1)
-	{
-		
-		while(2)
-		{
-
-			ScrCls();
-			ScrDispStr(0,0,1,"普通测试  %6d","CommonTest%6d",++TotalNum);
-			ErrorFlag=0;
-			ExitFlag=0;
-			if(CancelCheck())break;
-			ScrDispStr(0,2,1,"请刷卡<<<","SWIPE CARD<<<");
-			MagReset();
-			while(3)
-			{
-				if(!MagSwiped()) break;
-				if(CancelCheck())
-				{
-					TotalNum--; 
-					ExitFlag=1;
-					break;
-				}
-			}// 3
-			
-			if(ExitFlag==1)break;
-
-			ucRet=MagRead((unsigned char*)Track1,(unsigned char*)Track2,(unsigned char*)Track3);
-
-			switch(ucRet)
-			{
-				case 0x01:ScrDispStr(0,4,1,"读到1磁 0x%02x","Only Track1! 0x%02x",ucRet);break;
-				case 0x02:ScrDispStr(0,4,1,"读到2磁 0x%02x","Only Track2! 0x%02x",ucRet);break;
-				case 0x04:ScrDispStr(0,4,1,"读到3磁 0x%02x","Only Track3! 0x%02x",ucRet);break;
-				case 0x03:ScrDispStr(0,4,1,"读到1,2磁 0x%02x","Only Track1/2! 0x%02x",ucRet);break;
-				case 0x05:ScrDispStr(0,4,1,"读到1,3磁 0x%02x","Only Track1/3! 0x%02x",ucRet);break;
-				case 0x06:ScrDispStr(0,4,1,"读到2,3磁 0x%02x","Only Track2/3! 0x%02x",ucRet);break;
-				case 0x07:ScrDispStr(0,4,1,"读到1,2,3磁 0x%02x","Only Track1/2/3! 0x%02x",ucRet);break;
-				default:ScrDispStr(0,4,1,"读磁条错 0x%02x","Read MAG Error 0x%02x", ucRet);ErrorFlag=1;break;
-			}
-
-			if(ErrorFlag==1)
-			{
-				BeepFail(); 
-				getkey();
-				FailNum++;
-				if(TotalNum==1)return;
-				continue;
-			}
-
-			if(TotalNum==1){
-				getkey();
-				ScrClrLine(2,7);
-				ScrPrint(0,2,0,"Track1:   %s",Track1);
-				getkey();
-				
-				ScrClrLine(2,7);
-				ScrPrint(0,2,0,"Track2:   %s",Track2);
-				getkey();
-
-				ScrClrLine(2,7);
-				ScrPrint(0,2,0,"Track3:   %s",Track3);
-				getkey();
-
-				ScrClrLine(2,7);
-				ScrDispStr(0,4,1,"[取消]-退出\n[确认]-继续","[CANCLE]-Quit\n[ENTER]-GoOn");
-				if( getkey()==KEYENTER ){
-					memcpy(TempTrack1,Track1,sizeof(Track1));
-					memcpy(TempTrack2,Track2,sizeof(Track2));
-					memcpy(TempTrack3,Track3,sizeof(Track3));
-					continue;
-				}
-				else{
-					return ;
-				}
-			
-			}
-			else{
-					int iRet1,iRet2,iRet3;
-					if( strcmp(TempTrack1,Track1)==0 )iRet1=0;
-					else iRet1=1;
-					if( strcmp(TempTrack2,Track2)==0 )iRet2=0;
-					else iRet2=1;
-					if( strcmp(TempTrack3,Track3)==0 )iRet3=0;
-					else iRet3=1;
-					ScrPrint(0,6,0,"#1%s,#2%s,#3%s",Str[iRet1],Str[iRet2],Str[iRet3]);
-					if( iRet1==0 && iRet2==0 && iRet3==0 )ErrorFlag=0;
-					else ErrorFlag=1;			
-			}
-
-			if(ErrorFlag){
-				BeepFail(); 
-				getkey();
-				FailNum++;				
-			}
-			else{
-				BeepOK();
-			}
-
-		}// 2
-		ShowSuccessRate(TotalNum,FailNum);	
-		if(kbflush(),getkey()==KEYCANCEL) break;
-	}//1 
-	MagClose();
-}
-
-
-
 void MagTest1(void)
 {
 	MagTest(1);
@@ -346,9 +218,8 @@ void MagTestAll(void)
 {
 	uchar TestNum;
 	TESTSINGLE_ITEM TestItem[]={
-		{"1-单次",			"1-Single",			MagTest1,},
-		{"2-循环",			"2-Cycle",			MagTest2,},
-		{"3-普通卡成功率",	"3-Common Cycle",	MagCommonTestCyc,}
+		{"单次",			"Single",			MagTest1,},
+		{"循环",			"Cycle",			MagTest2,},
 	};
 
 	if(TestModule[T_MAG]=='N')

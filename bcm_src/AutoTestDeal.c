@@ -3,7 +3,7 @@
 uchar Autotest_result[20];    //自动测试的自测项目结果保存
 uchar Autotest;				  //1表示已经测试，0表示未进行测试
 uchar gSamTest;
-extern uchar auto_modem(uchar flag);  // flag: 0-测试  其他--与拨号
+
 extern uchar auto_kb(uchar flag);
 extern uchar NewRfTest(uchar flag);
 
@@ -1891,7 +1891,7 @@ uchar myModemTest(uchar flag)
 {
 	if(!Autotest)
 	{
-		Autotest_result[6] = auto_modem(flag);	
+		//Autotest_result[6] = auto_modem(flag);	
 	}
 	//DelayMs(100);
 	return Autotest_result[6];
@@ -1989,7 +1989,7 @@ int AutoTest(int flag)
 		{TestModule[T_LAN],				myLanTest		},
 		{TestModule[T_MODEM],			myModemTest	},
 		{TestModule[T_WIFI],			myWifiTest	},
-		{TestModule[T_BT],				BtTest		},
+		//{TestModule[T_BT],				BtTest		},
 		{TestModule[T_PINPORT],			myPinpadTest	},
 		{TestModule[T_COMB],			ComBTest	},
 		{TestModule[T_UDISK],			myUDiskTest	},
@@ -1998,18 +1998,17 @@ int AutoTest(int flag)
 		{TestModule[T_WNET],			myWnetTest	},//TestSim0
 		{TestModule[T_BATTERY],			myBatTest	},
 		{TestModule[T_SPEECH],			SpeechTest	},
-		{TestModule[T_BYPHONE],			ByPhoneTest	},
+		//{TestModule[T_BYPHONE],			ByPhoneTest	},
 		{TestModule[T_UDEV_TEST],		UsbDevTest	},//T_USBDEV是表示有没有该模块，
 		{TestModule[T_CLK],				Auto_ClkTest},//UHOST与UDEV是同个口，则不测试
 		{TestModule[T_WIFI],			myWifiTest	},
 		{udisk_tmp,						myUDiskTest	},
 		{TestModule[T_KEYLED],			KbLedTest	},
-		{TestModule[T_LEDPLY],			LedplyTest	},
 		{TestModule[T_LED],				LedTest		},
 		{TestModule[T_FELICA_ALL],		Auto_FelicaTest	},
-		{'N',							TestSim1	},//TestModule[T_SIM1]
+		//{'N',							TestSim1	},//TestModule[T_SIM1]
 		{TestModule[T_TSCREEN],			TsTest		},//TestModule[T_TSCREEN] S900/S300不测试触屏
-		{TestModule[T_GSENSOR],			GSensorTest	},
+		//{TestModule[T_GSENSOR],			GSensorTest	},
 		{TestModule[T_SCAN],			ScanTest	},
 		{TestModule[T_LCD1],			Auto_LcdTest1	},//add lifw 2014-05-13 白屏
 		{TestModule[T_LED1],			Auto_IcTest	},//too
@@ -2055,7 +2054,7 @@ int AutoTest(int flag)
 
 	
 	if(TestModule[T_MODEM]=='Y'){
-		auto_modem(1);//进行预拨号
+		//auto_modem(1);//进行预拨号
 	}
 
 	//先进行自测项目的测试
@@ -2238,34 +2237,3 @@ void AutoTest0(void)
 	AutoTest(0);
 }
 
-
-void a(void)
-{
-	auto_modem(2);
-}
-
-
-
-void b(void)
-{
-	auto_modem(0);
-}
-
-
-void c(void)
-{
-	Auto_MagTest(0);
-}
-void auto_tmp(void)
-{
-	uchar TestNum;
-	TESTSINGLE_ITEM TestItem[]={
-		{"1-bohao",		"1-bohao",		a	},
-		{"2-send",		"2-send",		b	},
-		{"3-shuaka",	"3-shuaka",		c	},
-	};
-	
-	TestNum=sizeof(TestItem)/sizeof(TestItem[0]);
-	DisSubMenuEx(TestItem,TestNum,"auto _ temp","auto _ temp",3);
-
-}

@@ -2,7 +2,7 @@
 path=F:\PAXPAY~2\build\gcc410\bin
 
 NAME      = bcm
-VERSION   = "v_BCM_V3.12T"
+VERSION   = "v_S910_V3.13"
 GCCDIR    = F:\PAXPAY~2\build\gcc410
 GCCBIN    = $(GCCDIR)\bin
 GCCLIB    = -L. -L$(GCCDIR)\lib
@@ -14,7 +14,7 @@ POSLIB    = sxxapi
 
 GCC       = $(GCCBIN)\arm-elf-gcc -O2 -msoft-float -mlittle-endian -ffunction-sections -D_SXXSO_POS $(LOCINC) -c
 STRIP     = $(GCCBIN)\arm-elf-strip --strip-unneeded
-LINK      = $(GCCBIN)\arm-elf-ld -T$(POSLIBDIR)\mldscript_slim $(GCCLIB) -L$(POSLIBDIR) -shared -Bsymbolic -Map $(LOCOBJ)\$(NAME).map -no-undefined -no-allow-shlib-undefined 
+LINK      = $(GCCBIN)\arm-elf-ld -T$(POSLIBDIR)\sldscript_slim $(GCCLIB) -L$(POSLIBDIR) -shared -Bsymbolic -Map $(LOCOBJ)\$(NAME).map -no-undefined -no-allow-shlib-undefined 
 OBJ       = $(LOCOBJ)\CppInit.o \
             $(LOCOBJ)\AutoTestDeal.o \
             $(LOCOBJ)\BT.o \
@@ -54,7 +54,7 @@ $(NAME).elf: $(OBJ) F:\MONTOR~1\bcm\bcm\BIN_MA~1
 	arm-elf-readelf -a $(LOCOBJ)\$(NAME).elf > $(LOCOBJ)\$(NAME).sys
 	arm-elf-objdump -D -S $(LOCOBJ)\$(NAME).elf > $(LOCOBJ)\$(NAME).dasm
 	$(STRIP) $(LOCOBJ)\$(NAME).elf
-    app_adjust $(LOCOBJ)\$(NAME).elf $(LOCOBJ)\$(NAME)($(VERSION)).bin PAX-S80-MAPP
+    app_adjust $(LOCOBJ)\$(NAME).elf $(LOCOBJ)\$(NAME)($(VERSION)).bin PAX-S80-SAPP
 
 # init file
 $(LOCOBJ)\CppInit.o: "$(GCCDIR)\lib\CppInit.c"

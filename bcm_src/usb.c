@@ -10,24 +10,13 @@ void UDiskTest2(void)
 	UDiskTest(2);
 }
 
-void UDiskATest1(void)
-{
-	UDiskATest(1);
-}
-void UDiskATest2(void)
-{
-	UDiskATest(2);
-}
-
 
 void UDiskTestAll(void)
 {
 	uchar TestNum;
 	TESTSINGLE_ITEM TestItem[]={
-		{"1-单次",	"1-Single",	UDiskTest1},
-		{"2-循环",	"2-Cycle ",	UDiskTest2},
-		{"3-A单次",	"3-ASingle",UDiskATest1},
-		{"1-A循环",	"1-ACycle ",UDiskATest2},
+		{"单次",	"Single",	UDiskTest1},
+		{"循环",	"Cycle ",	UDiskTest2},
 	};
 
 	if(TestModule[T_USBHOST]=='N')
@@ -41,97 +30,6 @@ void UDiskTestAll(void)
 	TestNum=sizeof(TestItem)/sizeof(TestItem[0]);
 	DisSubMenuEx(TestItem,TestNum,"U盘单项测试","U_Disk Test",3);
 }
-
-
-//USB扩展端口文件目录是udisk_a, sprintf(Udisk.str,"/udisk_a/test");
-//12端口，U盘文件访问目录是udisk
-//14端口，U盘文件访问目录是udisk_a
-// flag: 0-整机/主板  1-单次 2-循环 3-成功率 
-uchar  UDiskATest(uchar flag)
-{
-	uint TotalNum,FailNum;
-	int fd;
-	FS_W_STR  Udisk;
-	uchar ucFileName[30];
-	uchar ucRet;
-
-	kbflush();
-	ScrClrLine(2,7);
-	
-	if(flag==0) ScrDispStr(0,2,1,"U盘A测试","UDISKA Test");
-	if(flag==1) ScrDispStr(0,0,1,"   单次测试","Single Test");
-	if(flag==2) ScrDispStr(0,0,1,"   循环测试","Cycle Test ");
-	PortClose(P_USB_HOST);
-							
-	TotalNum=0;
-	FailNum=0;
-	while(1)
-	{
-		ucRet = PortOpen(P_USB_HOST_A,"UDISK");
-		if(ucRet!= 0)
-		{
-			sprintf(gErrnoMsg,"PortOpen(14)=0x%02x",ucRet);
-			ScrPrint(0,4,1,"PortOpen(14) fail %d ",ucRet);
-			goto ENDERR;
-		}
-		while(2)
-		{
-			if (flag==2)
-			{
-				ScrDispStr(0,0,0x81,"循环测试  %6d","CycleTest %6d",++TotalNum);
-				if(CancelCheck()) break;
-				if(TotalNum==10000) break;
-			}
-			/*
-			iRet=FsUdiskIn();
-			if(iRet)
-			{
-				ScrClrLine(2,7);
-				ScrPrint(0,4,1,"No UDISKA,FsUdiskIn=%d",iRet);
-				if(flag<=1)goto ENDERR;
-			}
-			*/
-			Udisk.fmt = NAME_FMT_ASCII;
-			Udisk.str = ucFileName;
-			Udisk.size = sprintf(Udisk.str,"/udisk_a/test");
-			fd = FsOpen(&Udisk, FS_ATTR_C|FS_ATTR_R);
-			if(fd<0)
-			{
-				ScrClrLine(2,7);
-				sprintf(gErrnoMsg,"FsOpen=%d",fd);
-				ScrDispStr(0,4,1,"U盘A测试失败FsOpen=%d", "UDiskA Fail,FsOpen=%d",fd);
-				FsClose(fd);
-				BeepFail();
-				FailNum ++;
-				if(flag<=1)	goto ENDERR;
-			}
-			else
-			{
-				ScrClrLine(2,7);
-				ScrDispStr(0,4,1, "U盘A测试成功%d", "U DiskA Test OK%d",fd);
-				FsClose(fd);
-				if(flag<=1)	goto ENDOK;
-			}
-		
-		}//while(2)
-		ShowSuccessRate(TotalNum,FailNum);
-		kbflush();
-		if(getkey()==KEYCANCEL)break;
-	}
-
-ENDERR:
-	BeepFail();
-	DelayMs(500);
-	PortClose(P_USB_HOST_A);
-    return 1;
-ENDOK:
-	BeepOK();
-	DelayMs(500);
-	PortClose(P_USB_HOST_A);
-    return 0;
-}
-
-
 
 
 // flag: 0-整机/主板  1-单次 2-循环 3-成功率

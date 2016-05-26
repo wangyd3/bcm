@@ -2,7 +2,7 @@
 path=F:\PAXPAY~2\build\gcc410\bin
 
 NAME      = bcm
-VERSION   = "v_MATCH_V3.13"
+VERSION   = "v_S910_V3.13"
 GCCDIR    = F:\PAXPAY~2\build\gcc410
 GCCBIN    = $(GCCDIR)\bin
 GCCLIB    = -L. -L$(GCCDIR)\lib

@@ -9,10 +9,11 @@
 //#define DEBUG		//调试打印
 //#define LIB_SO		//主要是有一些函数是静态编译上没有定义的
 
-#define ALL_WNET_VER_MATCH //国内WNET版本完整比对
+//#define ALL_WNET_VER_MATCH //国内WNET版本完整比对
 //#define BCM      //国内
 //#define Venezuela //委内瑞拉
 //#define BAXI      //巴西
+#define S910_MIN
 
 
 #ifdef  BCM
@@ -53,6 +54,17 @@
 #define WIFI_ON
 #define BT_ON
 #endif
+
+
+#ifdef  S910_MIN
+#define APPNAME    "S910_FTEST"
+#define STRING_VERSION	 " S910_POS_FTEST_V3.13 " 
+#define SOFT_VERSION	"_S910_V3.13"
+//#define SPEECH_ON
+#define WIFI_ON
+#define BT_ON
+#endif
+
 
 
 //定义通过终端信息函数所选的机型：

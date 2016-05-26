@@ -72,33 +72,6 @@ void PrintLogo(void)
 	
 }
 
-
-void PrintAlphaH(void)
-{
-    int PageNum=0;
-    uchar i,ucRet;
-    ScrClrLine(0,7);
-    ScrDispStr(0,0,1, "连续H打印测试","Multi-H Test ");
-    while(1)
-    {
-		if(CancelCheck()) break; 
-        ScrDispStr(0,4,1,"正在打印,页%d...","Printing Page%d ",++PageNum);
-		PrnInit();
-        PrnFontSet(1, 1);
-        for(i=0;i<20;i++)
-            PrnStr("HHHHHHHHHHHHHHHHHHHHHH\n");
-        PrnStr("\f");
-		ucRet=PrnStart();
-        if(ucRet!=0)
-        {
-			ShowPrinterErr(6,ucRet);
-            BeepFail();
-			DelayMs(1500);
-			break;
-        }
-    }//while(1)
-}
-
 uchar PrinterTest (uchar flag)
 {
 	int i,count,BlockNum=0,Temperature=25;
@@ -320,10 +293,9 @@ void PrinterTestAll(void)
 	
 	uchar TestNum;
 	TESTSINGLE_ITEM TestItem[]={
-		{"1-单页",	"1-Single",	PrinterTest1,},
-		{"2-多页",	"2-Multi",	PrinterTest2,},
-		{"3-黑块",	"3-Block",	PrintLogo,	 },
-		{"1-连续H",	"1-MultiH",	PrintAlphaH, }
+		{"单页",	"Single",	PrinterTest1,},
+		{"多页",	"Multi",	PrinterTest2,},
+		{"黑块",	"Block",	PrintLogo,	 },
 	};
 
 	if(TestModule[T_PRINTER]=='N')

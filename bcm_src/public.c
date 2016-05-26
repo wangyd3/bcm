@@ -612,12 +612,18 @@ void DisSubMenuEx(TESTSINGLE_ITEM TestItem[],char TestNum,char *ChTitle,char *En
 			if(i+Page*Num>=TestNum)break;
 			if(Num==6)
 			{
-				if(i%2==0)ScrDispStr(0,(i/2+1)*2,0x01,TestItem[i+Page*Num].ChStr,TestItem[i+Page*Num].EnStr);
-				else ScrDispStr(64,(i/2+1)*2,0x01,TestItem[i+Page*Num].ChStr,TestItem[i+Page*Num].EnStr);
+				if(i%2==0){
+					ScrDispStr(0,(i/2+1)*2,0x01,"%d-","%d-",i+1);
+					ScrDispStr(16,(i/2+1)*2,0x01,TestItem[i+Page*Num].ChStr,TestItem[i+Page*Num].EnStr);
+				}else {
+					ScrDispStr(64,(i/2+1)*2,0x01,"%d-","%d-",i+1);
+					ScrDispStr(80,(i/2+1)*2,0x01,TestItem[i+Page*Num].ChStr,TestItem[i+Page*Num].EnStr);
+				}
 			}
 			else if(Num==3)
 			{
-				ScrDispStr(0,(i+1)*2,0x01,TestItem[i+Page*Num].ChStr,TestItem[i+Page*Num].EnStr);
+				ScrDispStr(0,(i+1)*2,0x01,"%d-","%d-",i+1);
+				ScrDispStr(16,(i+1)*2,0x01,TestItem[i+Page*Num].ChStr,TestItem[i+Page*Num].EnStr);
 			}
 		}
 

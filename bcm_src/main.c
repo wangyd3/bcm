@@ -25,7 +25,6 @@ const APPINFO AppInfo={
 extern void test_bid(void);
 extern void p_port_test(void);
 extern int AutoTest(int flag);
-extern uchar cmu_test(uchar flag);
 extern void AutoTest0(void);
 extern void LanHubTestAll(void);
 
@@ -268,22 +267,7 @@ int main(void)
 		}
 	}
 
-	//无线测试
-	DelayMs(1000);
-	if(Cmu200Result!='Y' && !kbhit() && getkey()==KEY9) //没有测试成功而且有按键9的时候
-	{
-		if( !cmu_test(0) )
-		{	
-			//测试成功
-			Cmu200Result = 'Y';
-			fid = open(F_CMU200,O_RDWR);
-			if(fid<0)ShowFileCtrlErr(__LINE__);
-			else if( write(fid,&Cmu200Result,1)!=1 )
-				ShowFileCtrlErr(__LINE__);
-			close(fid);
-		}
 	
-	}
 #endif
 
 	//LED灯亮1s
@@ -312,7 +296,6 @@ int main(void)
 }
 
 extern uchar COMA2PC(uchar flag);
-extern uchar auto_modem(uchar flag);
 //flag=0 正常测试  flag!=0 PPQ测试
 void test_all(int flag)
 {
@@ -330,27 +313,23 @@ void test_all(int flag)
 #else
 		{TestModule[T_COMA_TEST],	0,	"COMA",			COMA2PC		},
 #endif
-		{TestModule[T_BT],			0,	"BT",			BtTest		},
+		//{TestModule[T_BT],			0,	"BT",			BtTest		},
 		{TestModule[T_TSCREEN],		0,	"TSCREEN",		TsTest		},//TestModule[T_TSCREEN] S900/S300不测试触屏
 		{TestModule[T_IC],			0,	"IC",			IcTest		},
 		{TestModule[T_LAN],			0,	"LAN",			LanTest		},
-		{TestModule[T_LAN2],		0,	"LAN2",			Lan2Test	},
 		{TestModule[T_WIFI],		0,	"WIFI",			WifiTest	},
 		{TestModule[T_PINPORT],		0,	"PINPORT",		PinpadTest	},
-		//{TestModule[T_COMB],		0,	"COMB",			ComBTest	},
 		{TestModule[T_COMB_TEST],	0,	"COMB",			ComBTest	},
 		{TestModule[T_UDISK],		0,	"UDISK",		UDiskTest	},
-		{TestModule[T_UDISKA],		0,	"UDISKA",		UDiskATest	},
 		{TestModule[T_SDCARD],		0,	"SDCARD",		SDCardTest	},
 		{TestModule[T_WNET],		0,	"WNET",			WnetTest	},//TestSim0 //WnetTest //Cmu200Test
 		
-		{TestModule[T_MODEM],		0,	"MODEM",		auto_modem	},//modem预拨号	
+		//{TestModule[T_MODEM],		0,	"MODEM",		auto_modem	},//modem预拨号	
 		
 		{TestModule[T_PRINTER],		0,	"PRINTER",		PrinterTest	},
 		{TestModule[T_PAPERBACK],	0,  "PAPERBACK",	PaperBackTest},
-		//{TestModule[T_BATTERY],		0,	"BATTERY",		BatteryTest	},
 		{TestModule[T_SPEECH],		0,	"SPEECH",		SpeechTest	},
-		{TestModule[T_BYPHONE],		0,	"BYPHONE",		ByPhoneTest	},
+		//{TestModule[T_BYPHONE],		0,	"BYPHONE",		ByPhoneTest	},
 		{TestModule[T_UDEV_TEST],	0,	"USBDEV",		UsbDevTest	},//T_USBDEV是表示有没有该模块，
 		{TestModule[T_LCD],			0,	"LCD",			LcdTest		},//T_UDEV_TEST表示整机需不需要测试
 		{TestModule[T_CLK],			0,	"CLK",			ClkTest		},//UHOST与UDEV是同个口，则不测试
@@ -358,16 +337,12 @@ void test_all(int flag)
 		{TestModule[T_KB],			0,	"KB",			KbTest		},
 		{TestModule[T_BEEP],		0,	"BEEP",			BeepTest	},
 		{TestModule[T_KEYLED],		0,	"KEYLED",		KbLedTest	},
-		{TestModule[T_LEDPLY],		0,	"LEDPLY",		LedplyTest	},
 		{TestModule[T_MAG],			0,	"MAG",			MagTest		},
 		{TestModule[T_RF],			0,	"RF",			RfTest		},
 		{TestModule[T_LED],			0,	"LED",			LedTest		},
-		{TestModule[T_FELICA_ALL],	0,	"FELICA",		FelicaTest	},
-		{'N',						0,	"SIM1",			TestSim1	},//TestModule[T_SIM1]
-		{TestModule[T_GSENSOR],		0,	"GSENSOR",		GSensorTest	},
+		//{TestModule[T_GSENSOR],		0,	"GSENSOR",		GSensorTest	},
 		{TestModule[T_SCAN],		0,	"SCAN",			ScanTest	},
 		{TestModule[T_BATTERY],		0,	"BATTERY",		BatteryTest	},
-		//{TestModule[T_BASE],		0,	"BASE",			BaseTest	},
 		{'N',						0,	"VER",			VerTest     },//TestModule[T_VER]='N',开始必须是N
 	};
 
@@ -390,7 +365,7 @@ void test_all(int flag)
 
 	if(TestModule[T_MODEM]=='Y')
 	{
-		auto_modem(1); //modem预拨号
+		//auto_modem(1); //modem预拨号
 	}
 
     DeleteLog(F_BASIC_INFO);
@@ -744,87 +719,47 @@ void TestCyc(void)
 	
 }
 
-void sleep_test(void);
-void ppq_test(void);
-extern void auto_tmp(void);
 
 void TestSingle(void)
 {
 	TESTSINGLE_ITEM TestItem[]={
-		{"1-蜂鸣器",	"1-BUZ",		BeepTestAll,	},
-		{"2-时钟",		"2-CLK",		ClkTestAll,		},
-		{"3-液晶屏",	"3-LCD",		LcdTestAll,		},
-		{"4-按键",		"4-KEY",		KbTestAll,		},
-		{"5-IC卡",		"5-ICC",		IcTestAll,		},
-		{"6-LED",		"6-LED",		LedTestAll,		},
-		{"1-MODEM",		"1-MODEM",		ModemTestAll,	},
-		{"2-磁卡",		"2-MAG",		MagTestAll,		},
-		{"3-打印机",	"3-PRT",		PrinterTestAll,	},
-		{"4-射频卡",	"4-RFC",		RfTestAll,		},
-		{"5-串口",		"5-COM",		PortTestAll,	},
-		{"6-以太网",	"6-LAN",		LanTestAll,		},
-		{"1-FeliC",		"1-FeliC",		FelicaTestAll,	},
-		{"2-Flash",		"2-Flash",		FlashTestAll,	},
-		{"3-OTG",		"3-OTG",		ComTestAll,		},
-		{"4-无线",		"4-WNET",		WnetTestAll,	},
-		{"5-USB从",		"5-USBD",		UsbDevTestAll,	},
-		{"6-LED灯",		"6-LED",		LedTestAll,		},
-		{"1-电池",		"1-BAT",		BatteryTestAll,	},
-		{"2-WIFI",		"2-WIFI",		WifiTestAll,	},
-		{"3-USB主",		"3-USBH",		UDiskTestAll,	},
-		{"4-客显",		"4-LEDP",		LedplyTestAll,	},
-		{"5-蓝牙",		"5-BT",			BtTestAll,		},
-		{"6-扬声器",	"6-SPKR",		SpeechTestAll,	},
-		{"1-SD卡",		"1-SDHC",		SDCardTestAll,	},
-		{"2-触摸屏",	"2-TP",			TsTestAll,		},
-		{"3-扫描",		"3-SCAN",		ScanTestAll		},
-		{"4-日志",		"4-Log",		LogTestAll,		},
-		{"5-密钥",		"5-PED",		PEDTestAll,		},
-		{"6-感应",		"6-GSen",		GSensorTestAll	},
-		{"1-自动",		"1-Auto",		auto_tmp	},
-		{"2-PPQ",		"2-PPQ",		ppq_test	},
-		{"3-休眠",		"3-sleep",		sleep_test	},
+		{"蜂鸣器",	"BUZ",		BeepTestAll,	},
+		{"时钟",	"CLK",		ClkTestAll,		},
+		{"液晶屏",	"LCD",		LcdTestAll,		},
+		{"按键",	"KEY",		KbTestAll,		},
+		{"IC卡",	"ICC",		IcTestAll,		},
+		{"LED",		"LED",		LedTestAll,		},
+		{"磁卡",	"MAG",		MagTestAll,		},
+		{"打印机",	"PRT",		PrinterTestAll,	},
+		{"射频卡",	"RFC",		RfTestAll,		},
+		{"串口",	"COM",		PortTestAll,	},
+		{"OTG",		"OTG",		ComTestAll,		},
+		{"无线",	"WNET",		WnetTestAll,	},
+		{"USB从",	"USBD",		UsbDevTestAll,	},
+		{"LED灯",	"LED",		LedTestAll,		},
+		{"电池",	"BAT",		BatteryTestAll,	},
+		{"WIFI",	"WIFI",		WifiTestAll,	},
+		{"USB主",	"USBH",		UDiskTestAll,	},
+		{"扬声器",	"SPKR",		SpeechTestAll,	},
+		{"SD卡",	"SDHC",		SDCardTestAll,	},
+		{"触摸屏",	"TP",		TsTestAll,		},
+		{"扫描",	"SCAN",		ScanTestAll		},
+		{"日志",	"Log",		LogTestAll,		},
+		{"密钥",	"PED",		PEDTestAll,		},		
 	};
 	uchar TestNum;
 	TestNum=sizeof(TestItem)/sizeof(TestItem[0]);
 	DisSubMenuEx(TestItem,TestNum,"单项测试","Single Test",2);
 }
 
-
-
 void TestAll(void)
 {
 	test_all(0);
 }
 
-void ppq_test(void)
-{
-	char buff[10];
-	ScrClrLine(0,7);
-	memset(buff,0,sizeof(buff));
-	InputAsc("请输入密码:","PLS INPUT PWD:",buff,0,10,1);
-	if(strcmp(buff,"2580"))
-	{
-		ScrPrint(0,2,1,"PIN ERROR");
-		getkey();
-		return;
-	}
-	while(1)
-	{
-		ScrClrLine(0,7);
-		ScrPrint(0,2,1,"PIN OK");
-		if(getkey()==KEYCANCEL)break;
-		test_all(1);
-	}
-}
 
-void sleep_test(void)
-{
-	ScrCls();
-	ScrPrint(24,2,1,"Sleep Test");
-	SysSleep(NULL);
-	ScrPrint(24,4,1,"after exe SysSleep");
-	getkey();
-}
+
+
+
 
 

@@ -131,10 +131,6 @@ uchar LcdTestCyc(ulong Loops)
 
 uchar LedplyTestCyc(ulong Loops)
 {
-	ScrCls();
-	ScrDispStr(0,0,0x81,"数显煲机  %6d","LEDP LOOP %6d",Loops);
-	UpdateLoopTime();
-	LedplyTest(3);
 	return 0;
 }
 
@@ -179,30 +175,6 @@ uchar IcTestCyc(ulong Loops)
 
 uchar ModemTestCyc(ulong Loops) 
 {
-	uchar ucRet;
-	ScrCls();
-	ScrDispStr(0,0,0x81,"MODEM煲机 %6d","MODEM LOOP%6d",Loops);
-	UpdateLoopTime();
-	kbflush();
-	DispTimer(7);
-
-	RouteSetDefault(ROUTE_MODEM);
-
-	ucRet=ModemDial(NULL,(unsigned char*)"87.",1);
-	OnHook(); 
-	if(ucRet!=0x33 && ucRet!=0x30)
-	{
-		ScrPrint(0,4,1,"ModemDial ERR:%02x",ucRet);
-		if(RecordFirstError(Loops)) return 1;
-		else RecordLog(LOOP_FIRST_ERR_RECORD,"ModemDial ERR=0x%02x",ucRet);
-		WaitForCancel(Loops);
-		return 1;
-	}
-	else 
-	{
-		ScrDispStr(0,4,1,"未接电话线...","No Line...");
-		DelayMs(500);
-	}
 	return 0;
 }
 
@@ -418,104 +390,16 @@ uchar RfTestCyc(ulong Loops)
 
 uchar FelicaTestCyc(ulong Loops)
 {
-
-	int slen, rlen;
-	uchar ucRet,rate=0,polarity=0,cmd[512],Resp[512];
-
-	ScrCls(); 
-	ScrDispStr(0,0,0x81,"FeliC卡   %6d","FeliC     %6d",Loops);
-	UpdateLoopTime();
-	kbflush();
-	DispTimer(7);
-
-	PiccOpen();
-	ucRet = PiccInitFelica(0, 0);//调用初始化felica的API接口（新增）
-	if (ucRet) 
-	{   //如果初始化不成功
-		ScrDispStr(0,4,1,"其他错误: 0x%02x","Other ERR: 0x%02x",ucRet);
-		if(RecordFirstError(Loops)) return 1;
-		else RecordLog(LOOP_FIRST_ERR_RECORD,"FelicaInit=0x%02x",ucRet);
-		WaitForCancel(Loops);
-		return 1;
-		
-	}
-	
-	 //组装命令
-	cmd[0]=0x06;
-	cmd[1]=0x00;
-	cmd[2]=0xFF;
-	cmd[3]=0xFF;
-	cmd[4]=0x01;
-	cmd[5]=0x00;
-
-	slen=6;
-	rlen=0;
-	memset(Resp,0,sizeof(Resp));
-    
-
-    ucRet=PiccCmdExchange(slen,cmd,&rlen,Resp);//调用PiccCmdExchange接口向felica卡发送polling命令
-	if(ucRet == 0)
-	{
-		ScrDispStr(0,4,1,"Cmd错误: 0x%02x","FelicaCmd:0x%02x",ucRet);
-		/*
-		if(RecordFirstError(Loops)) return 1;
-		else RecordLog(LOOP_FIRST_ERR_RECORD,"FelicaCmd=0x%02x",ucRet);
-		WaitForCancel(Loops);
-		return 1;
-		*/
-		DelayMs(1000);
-	}
-	else 
-	{
-		ScrDispStr(0,4,1,"感应区无卡", "No card Detect");	
-	}	
-	PiccClose();
-	DelayMs(500);
 	return 0; 
-
 }
 
 uchar GSensorTestCyc(ulong Loops)
 {
-	int iXLeanAngle, iYLeanAngle, iZLeanAngle;
-
-	ScrCls(); 
-	ScrDispStr(0,0,0x81,"G-SOR煲机 %6d","G-SOR LOOP%6d",Loops);
-	UpdateLoopTime();
-	kbflush();
-	DispTimer(7);
-	GetLeanAngle(&iXLeanAngle, &iYLeanAngle, &iZLeanAngle);
-	if (iZLeanAngle < 0)
-	{
-		ScrPrint(0,4,1,"GetLeanERR=%d",iZLeanAngle);
-		if(RecordFirstError(Loops)) return 1;
-		else RecordLog(LOOP_FIRST_ERR_RECORD,"GetLeanERR=%d",iZLeanAngle);
-		WaitForCancel(Loops);
-		return 1;
-	}
-	else
-	{
-		ScrDispStr(0,4,1,"正常放置", "Place Normally");
-		DelayMs(500);
-	}
 	return 0;
 }
 
 uchar SpeechTestCyc(ulong Loops)
 {
-	int iRet;
-	ScrCls();
-	ScrDispStr(0,0,0x81,"语音煲机  %6d","SPKR LOOP %6d",Loops);
-	UpdateLoopTime();
-	iRet=SpeechTest(4);
-	if(iRet)
-	{
-		ScrPrint(0,4,1,"SoundPlay:%d",iRet);
-		if(RecordFirstError(Loops)) return 1;
-		else RecordLog(LOOP_FIRST_ERR_RECORD,"SoundPlay ERR=%d",iRet);
-		WaitForCancel(Loops);
-		return 1;
-	}
 	return 0;
 }	
 
@@ -579,72 +463,11 @@ uchar  SDCardTestCyc(ulong Loops)
 
 uchar LanTestCyc(ulong Loops)
 {
-	int iRet;
-	ScrCls();
-	ScrDispStr(0,0,0x81,"LAN 煲机  %6d","LAN LOOP  %6d",Loops);
-	UpdateLoopTime();
-	ScrDispStr(0,4,1,"启动DHCP...","Start DHCP...");
-	RouteSetDefault(ROUTE_LAN);//配置系统缺省路由lan
-	DhcpStart();
-	TimerSet(0,40);
-	do
-	{
-		iRet = DhcpCheck();
-		DelayMs(100);
-	}while(iRet < 0 && TimerCheck(0) > 0);
-	if (iRet != -14)
-	{
-		ScrPrint(0,4,1,"DHCP ERR:%d",iRet);
-		if(RecordFirstError(Loops)) return 1;
-		else RecordLog(LOOP_FIRST_ERR_RECORD,"DHCP=%d",iRet);
-		WaitForCancel(Loops);
-		return 1;
-
-	}
-	
-	DhcpStop();
 	return 0;
 }
  
 uchar BtTestCyc(ulong Loops)
 {
-#ifdef BT_ON
-	ST_BT_CONFIG tBtCfg;
-	int iRet;
-
-	
-	ScrCls();
-	ScrDispStr(0,0,0x81,"蓝牙煲机  %6d","BT LOOP    %6d",Loops);
-	UpdateLoopTime();
-	ScrPrint(0,2,1,"Reading BT Mac..");
-	iRet = BtOpen();
-	if(iRet)
-	{
-		ScrDispStr(0,4,1,"BtOpen = %d ", "BtOpen = %d ",iRet);
-		if(RecordFirstError(Loops)) return 1;
-		else RecordLog(LOOP_FIRST_ERR_RECORD,"BtOpen = %d",iRet);
-		WaitForCancel(Loops);
-		return 1;
-	}
-
-	iRet = BtGetConfig(&tBtCfg);
-	if(iRet)
-	{
-		ScrDispStr(0,4,1,"MAC失败%d", "Get MAC=%d",iRet);
-		if(RecordFirstError(Loops)) return 1;
-		else RecordLog(LOOP_FIRST_ERR_RECORD,"Get MAC=%d",iRet);
-		WaitForCancel(Loops);
-		return 1;
-	}
-	ScrPrint(0, 4, 0x00, "Local MAC:");
-	ScrPrint(0,5,0,"%02x%02x%02x%02x%02x%02x",
-		tBtCfg.mac[5], tBtCfg.mac[4], tBtCfg.mac[3],
-		tBtCfg.mac[2], tBtCfg.mac[1], tBtCfg.mac[0]);
-	memcpy(gBtMac,tBtCfg.mac,6);
-	DelayMs(1500);
-	BtClose();
-	
-#endif
 	return 0;
 }
 
