@@ -295,6 +295,7 @@ int main(void)
 	//PrinterTestAll();
 
 	//if(GetStep()<=5)TestAll();    //如果有接PPQ，则直接进入整机测试
+	while(1)
 	{
 		TESTSINGLE_ITEM TestItem[]={
 			{"1-整机",	"1-ALL",	TestAll,	},

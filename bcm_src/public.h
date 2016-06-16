@@ -9,8 +9,8 @@
 //#define DEBUG		//调试打印
 //#define LIB_SO		//主要是有一些函数是静态编译上没有定义的
 
-#define ALL_WNET_VER_MATCH //国内WNET版本完整比对
-//#define BCM      //国内
+//#define ALL_WNET_VER_MATCH //国内WNET版本完整比对
+#define BCM      //国内
 //#define Venezuela //委内瑞拉
 //#define BAXI      //巴西
 

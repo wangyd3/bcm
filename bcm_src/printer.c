@@ -198,7 +198,7 @@ uchar PrinterTest (uchar flag)
 				}
 				if(InfoOut[C_PORT_BOARD][0]!=0)
 				{
-					PortVer=atoi(&InfoOut[C_MAIN_BOARD][1]);
+					PortVer=atoi(&InfoOut[C_PORT_BOARD][1]);
 					PrnStr("|| PORT:%02d  \n",PortVer);
 				}
 				if(InfoOut[C_SAM_BOARD][0]!=0)
